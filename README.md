@@ -2,6 +2,8 @@
 
 ,https://gultekinmg.github.io/LooPlayer/
 
+in advance..
+
 <img src="https://raw.githubusercontent.com/gultekinmg/LooPlayer/main/loop.PNG"
      alt="Markdown Monster icon"
      style="float: left; margin-right: 10px;" />
