@@ -2,5 +2,5 @@
 
 https://gultekinmg.github.io/LooPlayer/
 
-https://github.com/gultekinmg/LooPlayer/blob/main/loop.PNG
+https://raw.githubusercontent.com/gultekinmg/LooPlayer/main/loop.PNG
 
