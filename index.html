@@ -1,0 +1,240 @@
+<html lang="en" translate="no" >
+	<head><title>Local Audio Player WAAP: parametric equalizer</title>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/> <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <link rel="icon" type="image/png" href="img/favicon.ico" /><!-- <link href="data:; base64,iVBORwOKGO=" rel="icon" />workaround to prevent "favicon not found" exceptions in Chrome.-->
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+		<link href="css/LooPlayer.css" rel="stylesheet">
+		<link href="rythm/particles.css" rel="stylesheet">
+</head>
+	<body class="color3">
+    <div id="audioPLAYER_wrapper"><audio id="audioPLAYER"  >controls</audio>
+			<div id="LooPlayer">
+				<div class="infoKEY" ondblclick="showRythm(); ">
+					<div class="rythm rythm-box rythm-bass "></div>
+					<div class="rythm rythm-box rythm-medium "></div>
+					<div class="rythm rythm-box rythm-high tilt1"></div>
+					<div class="tip_Help">
+							<div id="info"><h2>Local Music Visualizer</h2>
+								<p><small>do not Uses the following HTML5 featrures: <br>
+									 <a href="http://www.html5rocks.com/en/tutorials/webaudio/intro/">Web Audio API</a>, 
+									 <a href="http://www.html5rocks.com/en/tutorials/dnd/basics/">drop events</a>,
+									 <a href="http://www.html5rocks.com/en/features/file_access">file access</a>, and
+									 <a href="http://www.html5rocks.com/en/tutorials/canvas/integrating/">canvas</a>.
+								</p>
+								<p>Only works on the most recent versions of Chrome (and possibly Safari).</p>
+								<p>Here's the <a href="http://cbrandolino.github.com/local-audio-visualizer/docs/local_audio_visualizer">documentation</a>, and here's
+								<a href="http://github.com/cbrandolino">cbrandolino's github</a></small></p>
+							</div>
+							<table class="shortcuts"><h3>keyboard shortcuts</h3>
+									<tr><th>key</th><th>action</th></tr>
+									<tr><td>P</td><td>play/pause</td></tr>
+									<tr><td>L</td><td>Loop</td></tr>
+									<tr><td>↑、↓</td><td>prev/next</td></tr>
+									<tr><td>&lt;、&gt;</td><td>rew/forward 5sec</td></tr>
+									<tr><td>[、]</td><td>rew/forward 30sec</td></tr>
+									<tr><td>←、→</td><td>volume 5%</td></tr>
+									<tr><td>M</td><td>Mute</td></tr>
+									<tr><td>R</td><td>reLoad location</td></tr>
+									<tr><td>?</td><td>help</td></tr>
+							</table>
+					</div>
+				</div>
+				<i id="fileKEY"class="fa fa-folder-open icon" onclick='$("fileReader_wrapper").classList.toggle("hidden");'><span id="audioINFO"class="tip_fileKEY">Webkit Local Audio Player-Click to load local files</span></i>						
+				<i id="miCON"onclick='onMicClick(); ' class="fa fa-microphone icon"><span class="tip_miCON">karakoe Mike </span></i>
+				<i id="prevBtn" class="icon fa fa-step-backward"><span class="tip_prevBtn">Previous Track </span></i>
+				<i id="rewindBtn" class="icon fa fa-backward" ><span class="tip_rewindBtn">rewind</span></i>
+				<i id="playICON" class="icon fa fa-play"><span class="tip_playICON">Play / Pause</span></i>
+				<i id="forwardBtn" class="icon fa fa-forward" ><span class="tip_forwardBtn">forward </span></i>
+				<i id="nextBtn" class="icon fa fa-step-forward"><span class="tip_nextBtn">Next Track </span></i><!--<i class="icon fa fa-fast-backward"></i><i class="icon fa fa-backward" ></i><i class="icon fa fa-forward" ></i><i class="icon fa fa-fast-forward"></i> -->
+				<div id="looperBtn"><div class="spinner"></div>
+					<span class="tip_BookMarkLooper"><h3>BookMarkLooper</h3>Double click for looping all.</span>
+				</div>
+				<div id="audioProcess_wrapper">
+						<span id="audio-time-current">00:00</span>
+						<input type="range" id="audioProcess" value="0" max="100" />
+						<span id="audio-time-total">00:00</span>
+				</div>
+				<div class="volume_wrapper pulse3 fontColor2">
+					<div id="volumeKey"class="volumeBtn"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="#566574" fill-rule="evenodd" d="M14.667 0v2.747c3.853 1.146 6.666 4.72 6.666 8.946 0 4.227-2.813 7.787-6.666 8.934v2.76C20 22.173 24 17.4 24 11.693 24 5.987 20 1.213 14.667 0zM18 11.693c0-2.36-1.333-4.386-3.333-5.373v10.707c2-.947 3.333-2.987 3.333-5.334zm-18-4v8h5.333L12 22.36V1.027L5.333 7.693H0z" id="speakerICON" /></svg>
+						<span class="tip_Filters"><h3>INTRO VOLUME FILTERS</h3>
+						The Web Audio API lets you add different filter-nodes between your sound source and destination.<br/>
+						<code>BiquadFilterNode</code> is a simple low-order filter which gives you control over what parts of the frequency parts shall be emphasized and which parts shall be attenuated.<br/>
+						This lets you build equalizer apps and other effects.<br/>
+						There are 8 types of biquad filters: highpass, lowpass, bandpass, lowshelf, highshelf, peaking, notch, and allpass.<br/>
+						<strong>Highpass</strong> is a filter that passes higher frequencies well, but attenuates lower frequency components of signals.<br/>
+						<strong>Lowpass</strong> passes lower frequencies, but attenuates higher frequencies.<br/>
+						They are also called &#8220; low cut&#8221;  and &#8220; high cut&#8221;  filters, because that explains what what happens to the signal.<br/>
+						<strong>Highshelf</strong> and <strong>Lowshelf</strong> are filters are used to control the bass and treble of the sound.<br/>
+						They are used to emphasize or reduce signals above or below the given frequency.<br/>
+						You will find a Q property <code>BiquadFilterNode</code> interface, which is a double representing the <strong>Q Factor</strong>.<br/>
+						Quality Factor or <a href="https://en.wikipedia.org/wiki/Q_factor">Q Factor</a> control the bandwidth, the number of frequencies that are affected. The lower the Q factor,<br/>
+						the wider the bandwidth, meaning the more frequencies will be affected. The higher the Q factor, that narrower the bandwidth.<br/>
+						You can find more info about filters <a href="https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface">here</a>
+						</span>
+					</div>
+					<div class="volume_controls hidden">
+						<div  id="equalizer">
+							<div class="section"><div class="title">HF</div>
+							<div class="sliders">
+							<div class="range_slider">
+							<span class="scope">22</span>
+							<input type="range" name="eqr" class="vertical" min="4700" max="22000" step="100" value="4700" id="highShelf_frequency">
+							<span class="scope scope-min">4.7</span>
+							<span class="param">kHz</span>
+							</div>
+							<div class="range_slider">
+							<span class="scope">50</span>
+							<input type="range" name="eqr" class="vertical" min="-50" max="50" value="50" id="highShelf_gain">
+							<span class="scope scope-min">-50</span>
+							<span class="param">dB</span>
+							</div>
+							</div>
+							</div>
+							<div class="section"><div class="title">LF</div>
+							<div class="sliders">
+							<div class="range_slider">
+							<span class="scope">220</span>
+							<input type="range" name="eqr" class="vertical" min="35" max="220" step="1" value="35" id="lowShelf_frequency">
+							<span class="scope scope-min">35</span>
+							<span class="param">Hz</span>
+							</div>
+							<div class="range_slider">
+							<span class="scope">50</span>
+							<input type="range" name="eqr" class="vertical" min="-50" max="50" value="50" id="lowShelf_gain">
+							<span class="scope scope-min">-50</span>
+							<span class="param">dB</span>
+							</div>
+							</div>
+							</div>
+							<div class="section"><div class="title">HMF</div>
+							<div class="sliders">
+							<div class="range_slider">
+							<span class="scope">5.9</span>
+							<input type="range" name="eqr" class="vertical" min="800" max="5900" step="100" value="800" id="highPass_frequency">
+							<span class="scope scope-min">0.8</span>
+							<span class="param">kHz</span>
+							</div>
+							<div class="range_slider">
+							<span class="scope">12</span>
+							<input type="range" name="eqr" class="vertical" min="0.7" max="12" step="0.1" value="0.7" id="highPass_Q">
+							<span class="scope scope-min">0.7</span>
+							<span class="param">Q</span>
+							</div>
+							</div>
+							</div>
+							<div class="section"><div class="title">LMF</div>
+								<div class="sliders">
+								<div class="range_slider">
+									<span class="scope">1600</span>
+									<input type="range" name="eqr" class="vertical" min="80" max="1600" step="10" value="880" id="lowPass_frequency">
+									<span class="scope scope-min">80</span>
+									<span class="param">Hz</span>
+								</div>
+								<div class="range_slider">
+									<span class="scope">12</span>
+									<input type="range" name="eqr" class="vertical" min="0.7" max="12" step="0.1" value="0.7" id="lowPass_Q">
+									<span class="scope scope-min">0.7</span>
+									<span class="param">Q</span>
+								</div>
+								</div>
+							</div>
+							<div class="section"><div class="title">VOLUME</div>
+								<div class="sliders">
+									<div class="range_slider"style="width: 33px; ">
+										<span class="scope">Disto</span>
+										<input type="range" class="vertical"  id="distorter" value="0.001">
+										<span class="scope scope-min">.</span>
+										<span class="param">X</span>
+									</div>
+									<div class="range_slider"style="width: 33px; ">
+										<span class="scope">Gain</span>
+										<input type="range" class="vertical"  id="gainer" value="1" min="0.1" max="3.40" step="0.1">
+										<span class="scope scope-min">.</span>
+										<span class="param">X</span>
+									</div>
+									<div class="range_slider"style="width: 33px; ">
+										<span class="scope">Vol.</span>
+										<input type="range" class="vertical"  id="audioVolume" value="80" max="100"/>
+										<span class="scope scope-min">.</span>
+										<span class="param">X</span>
+									</div>
+								</div>
+							</div>
+							<div class="section"><!-- 3d -->
+								<div class="title">dual</div><div class="sliders "style='width:66px; margin:4px; '><input type="range" id="stereo" min="-1" max="1" value="0" step="0.01"/></div>
+								<div class="title">pan-z</div><div class="sliders "style='width:66px; margin:4px; '><input type="range" id="pannerZ" min="50" max="150" value="95" step="1" /></div>
+								<div class="title">x-y</div>
+								<div class="graph">
+									<input type="image" id='xy' src="./img/xy.png" width='100%'alt="x-y pan graph" />
+									<input type="image" class='dot' src="./img/dot.png">
+								</div>
+							</div>
+						</div>
+						<div class='pos3d hidden'><span id='popy' ></span><span id='listenerData'></span><span id='pannerData' ></span><!-- panner -->	</div> 
+					</div>
+				</div>
+
+				<div id="waves_wrapper" style='position: absolute;width: 222;height: 222;top: 33;left: 0;background-color: white;'></div>				
+				<div id="bookmark" class="hidden"></div>
+				<div id="audioLIST">
+					{{#lst}}<a href="###" data-aid="{{id}}" style="background-color: rgb({{bg}}); color: rgb({{clr}});">{{name}}</a>{{/lst}}
+				</div>
+				<div id="fileReader_wrapper"class="hidden" >
+					<div id="file-select">
+							<label for="selectedFiles" class="asbutton">
+							<i class="fa fa-folder-open" style="font-size: 55px;color: red;"></i>Select one or more files to upload </label>
+							<input type="file" id="selectedFiles" name="avatar"multiple accept="*"size="60" />
+							<input id="upcloud" type="checkbox" onclick="UpdateCloud ()"/>Upload cloud
+							<progress id="Upload_ProgressBar" max=100 value=0 ></progress>
+					</div>
+					<div id="dropArea">drop audio files here</div>
+					<div id="loginfo"><label>log:</label><textarea readonly class="log"></textarea></div>
+				</div>
+				<div id="canvas_Container"><canvas width=500 height=100 id="canvas"></canvas><canvas width=500 height=100 id="canvas-copy"></canvas></div>
+				<div class="particles hidden">
+				<div class='particle visual'><canvas id="oscilloscope" width="144" height="44"class='pulse1 tilt1 twist3 '></canvas></div>
+				<div class='particle color3  neon3 vanish2  rythm rythm-box rythm-high tilt2'><p id='trck'class='fontSize3 fontColor2 kern1'></p></div>
+				<div class='particle color4 neon3  tilt1'></div>
+				<div class='particle color4 pulse2 neon3  tilt2'></div>
+				<div class='particle color2 borderWidth3 borderColor3  neon4 '></div>
+				<div class='particle color4 fontSize2 neon4 borderColor2 kern2 '>1,2,3..</div>
+				<div class='particle neon4 '></div>
+				<div class='particle fontColor2 fontSize2 neon3 tilt2 kern1 '>comon</div>
+				<div class='particle fontColor2 fontSize2 neon3 tilt1 kern2'>Yeah</div>
+				<div class='particle  vanish2 rythm-high fontColor2 neon3 '></div>
+				<div class='particle color1 vanish2 pulse2 neon3 '></div>
+				<div class='particle color2 vanish2 pulse2 borderWidth3 neon3 '></div>
+				<div class='particle vanish2 jump3 pulse2 neon3 tilt2'></div>
+				<div class='particle color3 vanish2  rythm-box rythm-bass'></div>
+				<div class='particle color2 borderWidth3  jump2 rythm-box rythm-bass'></div>
+				<div class='particle color2 vanish2  jump2 rythm-box rythm-high tilt2'></div>
+				<div class='particle color3 pomp jump3 rythm-box rythm-high blur3'></div>
+				<div class='particle color4 vanish2 rythm-box rythm-medium'></div>
+				<div class='particle color4 rythm-box rythm-bass'></div>
+				<div class='particle rythm-box rythm-medium'></div>
+				<div class='particle shake2 neon2 pulse2'></div>
+				<div class='particle jump3 neon2  pulse2'></div>
+				<div class='particle shake2 neon2 blur3 pulse2'></div>
+				<div class='particle color3 shake2 blur3 neon2 '></div>
+				<div class='particle color3 shake2 blur3 neon2 '></div>
+				<div class='particle color3 shake2 blur3 neon2 '></div>
+				<div class='particle color3 shake2 blur3 neon2 '></div>
+				<div class='particle color3 shake2 blur3 neon2 '></div>
+				<div class='particle color3 shake2 neon2 '></div>
+				<div class='particle pulse3 twist2 '><p id="words"class='fontSize2'></p></div>
+				<div id="waves" style='opacity:0.1;z-index:-99;'></div>	
+			</div>
+     </div>
+		</div>
+
+	</body>
+</html>
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script type="text/javascript" src="js/mustache.js"></script>
+<script type="text/javascript" src="js/vendors.js"></script>
+<script type="text/javascript" src="js/actx.js"></script>
+<script  type="text/javascript"src="./rythm/rythm.js"></script>	
+
+
