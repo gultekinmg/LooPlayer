@@ -1,4 +1,4 @@
-# LooPlayer - Complex 3D equilizer, Looping Algorithm, visualizer,user friendly extedable web music player to be intergrated
+# LooPlayer - Complex 3D equilizer, Looping Algorithm, visualizer,user friendly extendable web music player to be intergrated
 
 ,https://gultekinmg.github.io/LooPlayer/
 
